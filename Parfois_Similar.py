@@ -212,7 +212,7 @@ with col_title:
             margin-top:2.2rem;
             margin-bottom:0.2rem;
         ">
-            Similarity Detection for Fashion Retail Products
+            Similarity Detection for Fashion Retail Products - V2.0
         </div>
         """,
         unsafe_allow_html=True,
