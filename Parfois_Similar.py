@@ -209,7 +209,7 @@ with col_title:
             font-family:Arial;
             font-size:22px;
             color:#555;
-            margin-top:2rem;
+            margin-top:1rem;
             margin-bottom:0.2rem;
         ">
             Similarity Detection for Fashion Retail Products - V2.0
