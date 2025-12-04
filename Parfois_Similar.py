@@ -103,7 +103,6 @@ st.markdown(
             padding-top: 1.8rem;
         }
         .stApp [data-testid="stImage"] img {
-            margin-top: -2px;      /* move image up */
             margin-bottom: 0.1rem;
         }
         h1, h2, h3 {
