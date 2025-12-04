@@ -309,7 +309,7 @@ df = load_data(RESULT_CSV)
 # -------------------------------------------------
 # Layout: selector (left) + original product preview (right)
 # -------------------------------------------------
-left_col, right_col = st.columns([1.6, 0.8])
+left_col, right_col = st.columns([1.6, 2])
 
 with left_col:
     st.subheader("1. Choose a product")
