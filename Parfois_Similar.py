@@ -274,10 +274,10 @@ with col_title:
         """
         <div style="
             font-family:Arial;
-            font-size:15px;
+            font-size:22px;
             color:#555;
             margin-top:1.5rem;
-            margin-bottom:0.2rem;
+            margin-bottom:0rem;
         ">
             Similarity Detection for Fashion Retail Products - V2.0
         </div>
