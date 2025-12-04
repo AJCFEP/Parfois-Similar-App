@@ -317,10 +317,13 @@ st.markdown("---")
 st.subheader("3. Top 4 similar products")
 
 # -------------------------------------------------
-# Show neighbours
+# Show neighbours + preparar dados para feedback
 # -------------------------------------------------
 if selected_label:
     selected_row = df.loc[df["display_label"] == selected_label].iloc[0]
+
+    # Vamos usar o image_name do produto selecionado como "artigo_escolhido"
+    artigo_escolhido = selected_row["image_name"]
 
     similar_entries = []
 
@@ -348,7 +351,12 @@ if selected_label:
         st.info("No similar products found for this item.")
     else:
         cols = st.columns(4)
-        for col, (row, score) in zip(cols, similar_entries):
+
+        # Listas onde vamos guardar os IDs dos artigos recomendados e as avaliações
+        artigos_recomendados = []
+        avaliacoes = []
+
+        for idx, (col, (row, score)) in enumerate(zip(cols, similar_entries)):
             with col:
                 # Neighbours: very compact info, slightly larger image
                 show_product_card(
@@ -357,5 +365,24 @@ if selected_label:
                     compact=True,
                     image_scale=0.65,  # bigger images for neighbours
                 )
+
+                # Usamos o image_name como identificador do artigo recomendado
+                artigo_id = row["image_name"]
+                artigos_recomendados.append(artigo_id)
+
+                # Radio para avaliação deste artigo
+                avaliacao = st.radio(
+                    "Avaliação",
+                    ["mau", "razoável", "bom"],
+                    key=f"avaliacao_{artigo_escolhido}_{artigo_id}_{idx}"
+                )
+                avaliacoes.append(avaliacao)
+
+        # Neste momento:
+        # - artigo_escolhido  -> ID do produto base
+        # - artigos_recomendados -> lista de 4 image_name
+        # - avaliacoes -> lista com 4 strings ("mau", "razoável", "bom")
+        # No próximo passo vamos usar isto para chamar guardar_feedback(...)
+
 else:
     st.info("Select a product above to see its similar neighbours.")
