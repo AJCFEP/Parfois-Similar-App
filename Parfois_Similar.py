@@ -191,7 +191,7 @@ def show_product_card(
     row: pd.Series,
     similarity_score: Optional[float] = None,
     compact: bool = False,
-    image_scale: float = 0.20,
+    image_scale: float = 0.50,
 ):
     """
     Show a product card with INFO on the LEFT and IMAGE on the RIGHT.
@@ -204,7 +204,7 @@ def show_product_card(
     image_scale : float
         Factor to resize the image (1.0 = original size).
     """
-    info_col, img_col = st.columns([1.2, 0.8])
+    info_col, img_col = st.columns([0.6, 0.8])
 
     # --- IMAGE ---
     with img_col:
