@@ -204,7 +204,7 @@ def show_product_card(
     image_scale : float
         Factor to resize the image (1.0 = original size).
     """
-    info_col, img_col = st.columns([0.6, 0.8])
+    info_col, img_col = st.columns([1.2, 1])
 
     # --- IMAGE ---
     with img_col:
@@ -213,7 +213,7 @@ def show_product_card(
         if img_path is not None:
             try:
                 image = Image.open(img_path)
-                w, h = image.size
+                w, h = 0.5
                 image = image.resize((int(w * image_scale), int(h * image_scale)))
                 st.image(image)
             except Exception:
