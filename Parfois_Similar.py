@@ -31,13 +31,10 @@ import datetime
 def guardar_feedback(
     artigo_escolhido,
     artigos_recomendados,  # lista com 4 IDs
-    avaliacoes             # lista com 4 textos ("mau", "razoável", "bom")
+    avaliacoes,            # lista com 4 textos ("mau", "razoável", "bom")
+    comentario=None        # texto opcional
 ):
-    # timestamp atual
-    agora = datetime.datetime.now().isoformat()
-
     row = {
-        #"timestamp": agora,
         "artigo_escolhido": str(artigo_escolhido),
         "artigo_1": str(artigos_recomendados[0]),
         "avaliacao_1": str(avaliacoes[0]),
@@ -47,7 +44,12 @@ def guardar_feedback(
         "avaliacao_3": str(avaliacoes[2]),
         "artigo_4": str(artigos_recomendados[3]),
         "avaliacao_4": str(avaliacoes[3]),
+        "comentario": comentario,
     }
+
+    resposta = supabase.table("feedback").insert(row).execute()
+    return resposta
+
 
     # inserir na tabela "feedback"
     resposta = supabase.table("feedback").insert(row).execute()
