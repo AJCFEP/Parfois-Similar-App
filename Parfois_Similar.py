@@ -55,6 +55,21 @@ def guardar_feedback(
     resposta = supabase.table("feedback").insert(row).execute()
     return resposta
 
+#-------------------
+# Botão de descrregar dados de comentários
+#-------------------
+
+def carregar_feedback_df():
+    """Lê a tabela 'feedback' do Supabase e devolve um DataFrame."""
+    try:
+        resp = supabase.table("feedback").select("*").execute()
+        data = resp.data  # lista de dicionários
+        if not data:
+            return pd.DataFrame()
+        return pd.DataFrame(data)
+    except Exception as e:
+        st.error(f"Erro ao carregar feedback: {e}")
+        return pd.DataFrame()
 
 
 
@@ -406,3 +421,22 @@ if selected_label:
 
 else:
     st.info("Select a product above to see its similar neighbours.")
+# -------------------------------------------------
+# Secção opcional: descarregar feedback em CSV
+# -------------------------------------------------
+st.markdown("---")
+st.subheader("4. Descarregar tabela de comentários")
+
+feedback_df = carregar_feedback_df()
+
+if feedback_df.empty:
+    st.info("Ainda não há feedback guardado ou não foi possível carregar os dados.")
+else:
+    csv_bytes = feedback_df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Descarregar feedback em CSV",
+        data=csv_bytes,
+        file_name="feedback_parfois.csv",
+        mime="text/csv",
+        key="download_feedback_csv",
+    )
