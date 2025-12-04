@@ -432,7 +432,7 @@ feedback_df = carregar_feedback_df()
 if feedback_df.empty:
     st.info("Ainda não há feedback guardado ou não foi possível carregar os dados.")
 else:
-    csv_bytes = feedback_df.to_csv(index=False).encode("utf-8")
+    csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
     st.download_button(
         label="Descarregar feedback em CSV",
         data=csv_bytes,
