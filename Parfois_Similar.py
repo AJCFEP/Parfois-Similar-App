@@ -213,7 +213,7 @@ def show_product_card(
         if img_path is not None:
             try:
                 image = Image.open(img_path)
-                w, h = 0.5
+                w, h = image.size
                 image = image.resize((int(w * image_scale), int(h * image_scale)))
                 st.image(image)
             except Exception:
