@@ -37,7 +37,7 @@ def guardar_feedback(
     agora = datetime.datetime.now().isoformat()
 
     row = {
-        "timestamp": agora,
+        #"timestamp": agora,
         "artigo_escolhido": str(artigo_escolhido),
         "artigo_1": str(artigos_recomendados[0]),
         "avaliacao_1": str(avaliacoes[0]),
