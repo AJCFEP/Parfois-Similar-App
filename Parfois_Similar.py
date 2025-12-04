@@ -405,39 +405,40 @@ if selected_label:
         # Load feedback for CSV download
         feedback_df = carregar_feedback_df()
 
-        # ---- Buttons row: Save input (left) + Download CSV (right) ----
-        col_save, col_dl = st.columns([1, 1])
+# ---- Buttons row: Save input (left) + Download CSV (right) ----
+col_save, col_dl = st.columns([1, 1])
 
-        # LEFT: 5. Save your input
-        with col_save:
-            if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
-                if st.button("5. Save your input"):
-                    try:
-                        guardar_feedback(
-                            artigo_escolhido=artigo_escolhido,
-                            artigos_recomendados=artigos_recomendados,
-                            avaliacoes=avaliacoes,
-                            comentario=comentario
-                        )
-                        st.success("Successfully saved. Thanks!")
-                    except Exception as e:
-                        st.error(f"Error while saving: {e}")
-            else:
-                st.warning("It was not possible to prepare the recommended 4 articles.")
-
-        # RIGHT: 4. Download CSV feedback
-        with col_dl:
-            if feedback_df.empty:
-                st.write("No feedback to download yet.")
-            else:
-                csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
-                st.download_button(
-                    label="4. Download CSV feedback",
-                    data=csv_bytes,
-                    file_name="feedback_parfois.csv",
-                    mime="text/csv",
-                    key="download_feedback_csv",
+# LEFT: 5. Save your input
+with col_save:
+    if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
+        if st.button("<b>5.</b> Save your input", unsafe_allow_html=True):  # Adding <b> tags to bold and display numbers
+            try:
+                guardar_feedback(
+                    artigo_escolhido=artigo_escolhido,
+                    artigos_recomendados=artigos_recomendados,
+                    avaliacoes=avaliacoes,
+                    comentario=comentario
                 )
+                st.success("Successfully saved. Thanks!")
+            except Exception as e:
+                st.error(f"Error while saving: {e}")
+    else:
+        st.warning("It was not possible to prepare the recommended 4 articles.")
+
+# RIGHT: 4. Download CSV feedback
+with col_dl:
+    if feedback_df.empty:
+        st.write("No feedback to download yet.")
+    else:
+        csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
+        st.download_button(
+            label="<b>4.</b> Download CSV feedback",  # Adding <b> tags to bold and display numbers
+            data=csv_bytes,
+            file_name="feedback_parfois.csv",
+            mime="text/csv",
+            key="download_feedback_csv",
+            unsafe_allow_html=True  # Allow HTML rendering
+        )
 
 else:
     st.info("Select a product above to see its similar neighbours.")
