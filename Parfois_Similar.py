@@ -276,7 +276,7 @@ with col_title:
             font-family:Arial;
             font-size:22px;
             color:#555;
-            margin-top:0.5rem;
+            margin-top:1.5rem;
             margin-bottom:0.2rem;
         ">
             Similarity Detection for Fashion Retail Products - V2.0
@@ -290,7 +290,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
     """
     <div style="font-size:32px; font-weight:600;
-                margin-top:4px; margin-bottom:4px;">
+                margin-top:1px; margin-bottom:4px;">
         Explore product similarities
     </div>
     """,
