@@ -111,7 +111,7 @@ st.markdown(
         }
         hr {
             margin-top: -0.2rem !important;
-            margin-bottom: 0.2rem !important;
+            margin-bottom: -0.2rem !important;
         }
     </style>
     """,
