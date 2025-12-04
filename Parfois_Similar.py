@@ -56,7 +56,7 @@ def guardar_feedback(
     return resposta
 
 #-------------------
-# Botão de descrregar dados de comentários
+# Botão de descarregar dados de comentários
 #-------------------
 
 def carregar_feedback_df():
@@ -276,7 +276,7 @@ with col_title:
             font-family:Arial;
             font-size:22px;
             color:#555;
-            margin-top:1.5rem;
+            margin-top:0.5rem;
             margin-bottom:0.2rem;
         ">
             Similarity Detection for Fashion Retail Products - V2.0
