@@ -191,7 +191,7 @@ def show_product_card(
     row: pd.Series,
     similarity_score: Optional[float] = None,
     compact: bool = False,
-    image_scale: float = 0.50,
+    image_scale: float = 0.20,
 ):
     """
     Show a product card with INFO on the LEFT and IMAGE on the RIGHT.
