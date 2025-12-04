@@ -387,56 +387,58 @@ if selected_label:
                 artigo_id = row["image_name"]
                 artigos_recomendados.append(artigo_id)
 
-                # Radio para avaliação deste artigo
-                avaliacao = st.radio(
-                    "Avaliação",
-                    ["mau", "razoável", "bom"],
-                    key=f"avaliacao_{artigo_escolhido}_{artigo_id}_{idx}"
+                # Radio button for evaluating this item
+                rating = st.radio(
+                    "Rating",
+                    ["bad", "reasonable", "good"],
+                    key=f"rating_{selected_item}_{item_id}_{idx}"
                 )
-                avaliacoes.append(avaliacao)
+                ratings.append(rating)
 
-        # Caixa de comentários do utilizador (opcional)
-        comentario = st.text_area(
-            "Comentários do utilizador (opcional)",
+        # User comment box (optional)
+        comment = st.text_area(
+            "User comments (optional)",
             value="",
-            placeholder="Escreva aqui sugestões ou comentários sobre estas recomendações..."
+            placeholder="Write suggestions or comments about these recommendations here..."
         )
 
-        # Botão para guardar o feedback no Supabase
-        if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
-            if st.button("Guardar avaliação"):
+        # Button to save feedback to Supabase
+        if len(recommended_items) == 4 and len(ratings) == 4:
+            if st.button("Save rating"):
                 try:
                     guardar_feedback(
-                        artigo_escolhido=artigo_escolhido,
-                        artigos_recomendados=artigos_recomendados,
-                        avaliacoes=avaliacoes,
-                        comentario=comentario  # <-- novo argumento
+                        artigo_escolhido=selected_item,     # you may rename inside the function later
+                        artigos_recomendados=recommended_items,
+                        avaliacoes=ratings,
+                        comentario=comment  # <-- new argument in English
                     )
-                    st.success("Avaliação guardada com sucesso. Obrigado!")
+                    st.success("Rating saved successfully. Thank you!")
                 except Exception as e:
-                    st.error(f"Erro ao guardar a avaliação: {e}")
+                    st.error(f"Error while saving the rating: {e}")
         else:
-            st.warning("Não foi possível preparar os 4 artigos recomendados.")
+            st.warning("It was not possible to prepare the 4 recommended items.")
 
 
 else:
     st.info("Select a product above to see its similar neighbours.")
+
 # -------------------------------------------------
-# Secção opcional: descarregar feedback em CSV
+# Optional section: download feedback as CSV
 # -------------------------------------------------
 st.markdown("---")
-st.subheader("4. Descarregar tabela de comentários")
+st.subheader("4. Download comments table")
 
 feedback_df = carregar_feedback_df()
 
 if feedback_df.empty:
-    st.info("Ainda não há feedback guardado ou não foi possível carregar os dados.")
+    st.info("No feedback saved yet or the data could not be loaded.")
 else:
     csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
     st.download_button(
-        label="Descarregar feedback em CSV",
+        label="Download feedback as CSV",
         data=csv_bytes,
         file_name="feedback_parfois.csv",
         mime="text/csv",
         key="download_feedback_csv",
     )
+
