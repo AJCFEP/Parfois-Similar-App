@@ -389,22 +389,22 @@ if selected_label:
 
                 # Radio para avaliação deste artigo
                 avaliacao = st.radio(
-                    "Avaliação",
-                    ["mau", "razoável", "bom"],
+                    "Rating",
+                    ["Bad", "Medium", "Good"],
                     key=f"avaliacao_{artigo_escolhido}_{artigo_id}_{idx}"
                 )
                 avaliacoes.append(avaliacao)
 
         # Caixa de comentários do utilizador (opcional)
         comentario = st.text_area(
-            "Comentários do utilizador (opcional)",
+            "User comments (optional)",
             value="",
-            placeholder="Escreva aqui sugestões ou comentários sobre estas recomendações..."
+            placeholder="Write here your comments or observations..."
         )
 
         # Botão para guardar o feedback no Supabase
         if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
-            if st.button("Guardar avaliação"):
+            if st.button("Save your input"):
                 try:
                     guardar_feedback(
                         artigo_escolhido=artigo_escolhido,
@@ -412,11 +412,11 @@ if selected_label:
                         avaliacoes=avaliacoes,
                         comentario=comentario  # <-- novo argumento
                     )
-                    st.success("Avaliação guardada com sucesso. Obrigado!")
+                    st.success("Successfully saved. Thanks!")
                 except Exception as e:
-                    st.error(f"Erro ao guardar a avaliação: {e}")
+                    st.error(f"Error while saving: {e}")
         else:
-            st.warning("Não foi possível preparar os 4 artigos recomendados.")
+            st.warning("It was not possible to prepare the recommended 4 articles.")
 
 
 else:
@@ -425,16 +425,16 @@ else:
 # Secção opcional: descarregar feedback em CSV
 # -------------------------------------------------
 st.markdown("---")
-st.subheader("4. Descarregar tabela de comentários")
+st.subheader("4. Donwload csv ratings database")
 
 feedback_df = carregar_feedback_df()
 
 if feedback_df.empty:
-    st.info("Ainda não há feedback guardado ou não foi possível carregar os dados.")
+    st.info("There is still no saved feedback or it was not possible to load the data.")
 else:
     csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
     st.download_button(
-        label="Descarregar feedback em CSV",
+        label="Download CSV feedback",
         data=csv_bytes,
         file_name="feedback_parfois.csv",
         mime="text/csv",
