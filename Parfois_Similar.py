@@ -110,7 +110,7 @@ st.markdown(
             margin-bottom: 0.2rem !important;
         }
         hr {
-            margin-top: 0.2rem !important;
+            margin-top: -0.2rem !important;
             margin-bottom: 0.2rem !important;
         }
     </style>
