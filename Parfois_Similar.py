@@ -290,7 +290,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
     """
     <div style="font-size:32px; font-weight:600;
-                margin-top:1px; margin-bottom:4px;">
+                margin-top:1px; margin-bottom:1px;">
         Explore product similarities
     </div>
     """,
