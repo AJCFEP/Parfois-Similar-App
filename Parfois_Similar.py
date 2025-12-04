@@ -274,7 +274,7 @@ with col_title:
         """
         <div style="
             font-family:Arial;
-            font-size:22px;
+            font-size:15px;
             color:#555;
             margin-top:1.5rem;
             margin-bottom:0.2rem;
