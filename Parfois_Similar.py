@@ -402,11 +402,13 @@ if selected_label:
             placeholder="Write here your comments or observations..."
         )
 
-        # ---- Buttons row: Download CSV (left) + Save input (right) ----
+        # Load feedback for CSV download
         feedback_df = carregar_feedback_df()
+
         # ---- Buttons row: Save input (left) + Download CSV (right) ----
         col_save, col_dl = st.columns([1, 1])
 
+        # LEFT: 5. Save your input
         with col_save:
             if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
                 if st.button("5. Save your input"):
@@ -423,6 +425,7 @@ if selected_label:
             else:
                 st.warning("It was not possible to prepare the recommended 4 articles.")
 
+        # RIGHT: 4. Download CSV feedback
         with col_dl:
             if feedback_df.empty:
                 st.write("No feedback to download yet.")
@@ -435,7 +438,6 @@ if selected_label:
                     mime="text/csv",
                     key="download_feedback_csv",
                 )
-
 
 else:
     st.info("Select a product above to see its similar neighbours.")
