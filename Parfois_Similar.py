@@ -411,7 +411,7 @@ if selected_label:
         # LEFT: 5. Save your input
         with col_save:
             if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
-                if st.button("<b>5.</b> Save your input", unsafe_allow_html=True):  # Adding <b> tags to bold and display numbers
+                if st.button("5. Save your input"):
                     try:
                         guardar_feedback(
                             artigo_escolhido=artigo_escolhido,
@@ -432,12 +432,11 @@ if selected_label:
             else:
                 csv_bytes = feedback_df.to_csv(index=False, sep=";").encode("utf-8-sig")
                 st.download_button(
-                    label="<b>4.</b> Download CSV feedback",  # Adding <b> tags to bold and display numbers
+                    label="4. Download CSV feedback",
                     data=csv_bytes,
                     file_name="feedback_parfois.csv",
                     mime="text/csv",
                     key="download_feedback_csv",
-                    unsafe_allow_html=True  # Allow HTML rendering
                 )
 
 else:
