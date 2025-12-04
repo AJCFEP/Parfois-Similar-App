@@ -214,6 +214,7 @@ def show_product_card(
             try:
                 image = Image.open(img_path)
                 w, h = image.size
+                image_scale = 0.5
                 image = image.resize((int(w * image_scale), int(h * image_scale)))
                 st.image(image)
             except Exception:
