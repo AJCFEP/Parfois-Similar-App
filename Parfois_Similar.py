@@ -21,6 +21,39 @@ SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
+#--------
+# recebe um dicionário com os dados e faz o insert na tabela
+#--------
+
+
+import datetime
+
+def guardar_feedback(
+    artigo_escolhido,
+    artigos_recomendados,  # lista com 4 IDs
+    avaliacoes             # lista com 4 textos ("mau", "razoável", "bom")
+):
+    # timestamp atual
+    agora = datetime.datetime.now().isoformat()
+
+    row = {
+        "timestamp": agora,
+        "artigo_escolhido": str(artigo_escolhido),
+        "artigo_1": str(artigos_recomendados[0]),
+        "avaliacao_1": str(avaliacoes[0]),
+        "artigo_2": str(artigos_recomendados[1]),
+        "avaliacao_2": str(avaliacoes[1]),
+        "artigo_3": str(artigos_recomendados[2]),
+        "avaliacao_3": str(avaliacoes[2]),
+        "artigo_4": str(artigos_recomendados[3]),
+        "avaliacao_4": str(avaliacoes[3]),
+    }
+
+    # inserir na tabela "feedback"
+    resposta = supabase.table("feedback").insert(row).execute()
+    return resposta
+
+
 
 
 
