@@ -380,15 +380,12 @@ if selected_label:
                 )
                 avaliacoes.append(avaliacao)
 
-
-
-
-        # Neste momento:
-        # - artigo_escolhido  -> ID do produto base
-        # - artigos_recomendados -> lista de 4 image_name
-        # - avaliacoes -> lista com 4 strings ("mau", "razoável", "bom")
-        # No próximo passo vamos usar isto para chamar guardar_feedback(...)
-
+        # Caixa de comentários do utilizador (opcional)
+        comentario = st.text_area(
+            "Comentários do utilizador (opcional)",
+            value="",
+            placeholder="Escreva aqui sugestões ou comentários sobre estas recomendações..."
+        )
 
         # Botão para guardar o feedback no Supabase
         if len(artigos_recomendados) == 4 and len(avaliacoes) == 4:
@@ -397,13 +394,15 @@ if selected_label:
                     guardar_feedback(
                         artigo_escolhido=artigo_escolhido,
                         artigos_recomendados=artigos_recomendados,
-                        avaliacoes=avaliacoes
+                        avaliacoes=avaliacoes,
+                        comentario=comentario  # <-- novo argumento
                     )
                     st.success("Avaliação guardada com sucesso. Obrigado!")
                 except Exception as e:
                     st.error(f"Erro ao guardar a avaliação: {e}")
         else:
             st.warning("Não foi possível preparar os 4 artigos recomendados.")
+
 
 else:
     st.info("Select a product above to see its similar neighbours.")
