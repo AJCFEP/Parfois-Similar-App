@@ -100,7 +100,7 @@ st.markdown(
     """
     <style>
         .block-container {
-            padding-top: 1.5rem;
+            padding-top: 1.7rem;
         }
         .stApp [data-testid="stImage"] img {
             margin-bottom: 0.1rem;
