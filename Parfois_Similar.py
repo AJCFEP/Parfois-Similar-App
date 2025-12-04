@@ -328,7 +328,7 @@ with right_col:
     if selected_label:
         selected_row = df.loc[df["display_label"] == selected_label].iloc[0]
         # Original product: full info, normal size
-        show_product_card(selected_row, compact=False, image_scale=0.30)
+        show_product_card(selected_row, compact=False, image_scale=0.70)
 
 st.markdown("---")
 st.subheader("3. Top 4 similar products")
