@@ -204,7 +204,7 @@ def show_product_card(
     image_scale : float
         Factor to resize the image (1.0 = original size).
     """
-    info_col, img_col = st.columns([1.2, 1])
+    info_col, img_col = st.columns([1.2, 0.8])
 
     # --- IMAGE ---
     with img_col:
@@ -213,8 +213,9 @@ def show_product_card(
         if img_path is not None:
             try:
                 image = Image.open(img_path)
-                # Show image with a fixed smaller width
-                st.image(image, width=140)  # adjust 140 to taste
+                w, h = image.size
+                image = image.resize((int(w * image_scale), int(h * image_scale)))
+                st.image(image)
             except Exception:
                 st.write("Image could not be opened.")
         else:
@@ -226,40 +227,35 @@ def show_product_card(
             # Smaller, lighter text for neighbours
             st.caption(f"ID: {row['image_name']}")
         else:
-            # Smaller font via HTML
-            st.markdown(
-                f"<p style='font-size:14px;'><strong>Image ID:</strong> "
-                f"<code>{row['image_name']}</code></p>",
-                unsafe_allow_html=True
-            )
+            st.markdown(f"**Image ID:** `{row['image_name']}`")
 
         if not compact:
-            # Original product – full info, but in smaller text
+            # Original product – full info
             if not pd.isna(row.get("PROD_REF")) and row.get("PROD_REF_STR"):
-                st.caption(f"PROD_REF: {row['PROD_REF_STR']}")
+                st.write(f"**PROD_REF:** {row['PROD_REF_STR']}")
 
             if "DES_CONC" in row and not pd.isna(row["DES_CONC"]):
-                st.caption(f"Description: {row['DES_CONC']}")
+                st.write(f"**Description:** {row['DES_CONC']}")
 
             if "Color" in row and not pd.isna(row["Color"]):
-                st.caption(f"Color: {row['Color']}")
+                st.write(f"**Color:** {row['Color']}")
 
             if "Sizes" in row and not pd.isna(row["Sizes"]):
-                st.caption(f"Sizes: {row['Sizes']}")
+                st.write(f"**Sizes:** {row['Sizes']}")
 
-        # In both modes we keep Price (if available), also small
+        # In both modes we keep Price (if available)
         if "Price" in row and not pd.isna(row["Price"]):
             try:
-                st.caption(f"Price: {float(row['Price']):.2f} €")
+                st.write(f"**Price:** {float(row['Price']):.2f} €")
             except Exception:
-                st.caption(f"Price: {row['Price']}")
+                st.write(f"**Price:** {row['Price']}")
 
-        # Similarity only when provided (small text)
+        # Similarity only when provided
         if similarity_score is not None:
             if compact:
-                st.caption(f"Sim: {similarity_score:.3f}")
+                st.write(f"Sim: {similarity_score:.3f}")
             else:
-                st.caption(f"Similarity: {similarity_score:.3f}")
+                st.write(f"**Similarity:** {similarity_score:.3f}")
 
 
 # -------------------------------------------------
