@@ -1,5 +1,9 @@
 import streamlit as st
 from pathlib import Path
+import base64
+import streamlit.components.v1 as components
+
+
 
 # -------------------------------------------------
 # Paths
@@ -91,63 +95,14 @@ if FLUXO_IMG.exists():
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
     html = f"""
-    <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
-        <button id="zoom-in" style="margin-right:0.5rem;">+</button>
-        <button id="zoom-out" style="margin-right:0.5rem;">-</button>
-        <button id="zoom-reset">Reset</button>
-        <span style="margin-left:1rem; color:#666; font-size:0.9rem;">
-            Use o rato para arrastar a imagem. Roda do rato para zoom.
-        </span>
-    </div>
-
-    <div id="img-container" style="
-        width: 100%;
-        border: 1px solid #ddd;
-        overflow: auto;   /* permite ver a imagem toda com scroll */
-    ">
-        <img id="zoom-img"
-             src="data:image/png;base64,{img_b64}"
-             style="display: block; max-width: 100%; height: auto;"/>
-    </div>
-
-    <!-- Biblioteca panzoom -->
-    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
-    <script>
-        const img = document.getElementById('zoom-img');
-        const container = document.getElementById('img-container');
-        const btnIn = document.getElementById('zoom-in');
-        const btnOut = document.getElementById('zoom-out');
-        const btnReset = document.getElementById('zoom-reset');
-
-        if (img && container && btnIn && btnOut && btnReset) {{
-            const panzoom = Panzoom(img, {{
-                maxScale: 5,
-                minScale: 1,
-                contain: 'outside'
-            }});
-
-            // Zoom com roda do rato
-            container.addEventListener('wheel', panzoom.zoomWithWheel);
-
-            // Botão +
-            btnIn.addEventListener('click', function() {{
-                panzoom.zoomIn();
-            }});
-
-            // Botão -
-            btnOut.addEventListener('click', function() {{
-                panzoom.zoomOut();
-            }});
-
-            // Reset
-            btnReset.addEventListener('click', function() {{
-                panzoom.reset();
-            }});
-        }}
-    </script>
-    """
-
-    st.markdown(html, unsafe_allow_html=True)
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
+      </head>
+      <body>
+        <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
+            <button id="zoom-in" style="margin
 
 else:
     st.info(
