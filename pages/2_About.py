@@ -60,18 +60,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Global process / architecture diagram (to be provided as fluxogram.png)
-if FLUXO_IMG.exists():
-    st.image(
-        str(FLUXO_IMG),
-        use_container_width=True,
-        caption="Global pipeline: from raw data to similarity app and feedback."
-    )
-else:
-    st.info(
-        "Global process diagram `fluxogram.png` not found yet. "
-        "Place it in the app root folder (same level as Parfois_Similar.py)."
-    )
+
 
 # -------------------- 1. Overview --------------------
 st.markdown("### 1. Overview")
