@@ -16,7 +16,7 @@ FLUXO_IMG = BASE_DIR / "Fluxograma.drawio.mermaid.png"
 st.set_page_config(page_title="PARFOIS – Flowchart", layout="wide")
 
 # -------------------------------------------------
-# Header (igual às outras páginas)
+# Header (same as other pages)
 # -------------------------------------------------
 col_logo, col_title = st.columns([2, 3])
 
@@ -58,13 +58,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
-
-
-
-
 # -------------------------------------------------
-# Texto introdutório
+# Intro text
 # -------------------------------------------------
 st.markdown(
     """
@@ -93,10 +88,21 @@ st.write(
 )
 
 # -------------------------------------------------
-# Imagem com zoom e pan (sem bibliotecas externas)
+# Flowchart image with zoom/pan and download button
 # -------------------------------------------------
 if FLUXO_IMG.exists():
+    # Read image bytes once
     img_bytes = FLUXO_IMG.read_bytes()
+
+    # Download button (PNG)
+    st.download_button(
+        label="Download flowchart (PNG)",
+        data=img_bytes,
+        file_name="Parfois_Flowchart.png",
+        mime="image/png",
+    )
+
+    # Encode as base64 for embedding in HTML
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
     html = f"""
@@ -127,10 +133,9 @@ if FLUXO_IMG.exists():
           }}
           #zoom-img {{
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(1);
-            transform-origin: center center;
+            top: 0;
+            left: 0;
+            transform-origin: top left;
             cursor: grab;
           }}
         </style>
@@ -159,7 +164,7 @@ if FLUXO_IMG.exists():
           const btnReset = document.getElementById('zoom-reset');
 
           let scale = 1.0;
-          let minScale = 0.5;
+          let minScale = 0.2;
           let maxScale = 5.0;
           let isPanning = false;
           let startX = 0;
@@ -172,7 +177,26 @@ if FLUXO_IMG.exists():
               "translate(" + translateX + "px, " + translateY + "px) scale(" + scale + ")";
           }}
 
-          // Botões de zoom
+          // Fit image inside container on load (show 100% inside window)
+          img.addEventListener('load', function() {{
+            const cw = container.clientWidth;
+            const ch = container.clientHeight;
+            const iw = img.naturalWidth;
+            const ih = img.naturalHeight;
+
+            if (iw > 0 && ih > 0) {{
+              const s = Math.min(cw / iw, ch / ih);
+              scale = s;
+
+              // center image
+              translateX = (cw - iw * scale) / 2;
+              translateY = (ch - ih * scale) / 2;
+
+              updateTransform();
+            }}
+          }});
+
+          // Zoom buttons
           btnIn.addEventListener('click', function() {{
             scale = Math.min(maxScale, scale + 0.2);
             updateTransform();
@@ -187,18 +211,29 @@ if FLUXO_IMG.exists():
             scale = 1.0;
             translateX = 0;
             translateY = 0;
+            // After reset, fit again to container
+            const cw = container.clientWidth;
+            const ch = container.clientHeight;
+            const iw = img.naturalWidth;
+            const ih = img.naturalHeight;
+            if (iw > 0 && ih > 0) {{
+              const s = Math.min(cw / iw, ch / ih);
+              scale = s;
+              translateX = (cw - iw * scale) / 2;
+              translateY = (ch - ih * scale) / 2;
+            }}
             updateTransform();
           }});
 
-          // Zoom com roda do rato
+          // Mouse wheel zoom
           container.addEventListener('wheel', function(e) {{
             e.preventDefault();
             const delta = e.deltaY < 0 ? 0.1 : -0.1;
             scale = Math.min(maxScale, Math.max(minScale, scale + delta));
             updateTransform();
-          }});
+          }}, {{ passive: false }});
 
-          // Pan (arrastar) com rato
+          // Pan (drag)
           img.addEventListener('mousedown', function(e) {{
             isPanning = true;
             img.style.cursor = 'grabbing';
@@ -222,7 +257,6 @@ if FLUXO_IMG.exists():
     </html>
     """
 
-    # Renderizamos o HTML com JS dentro de um componente Streamlit
     components.html(html, height=750, scrolling=False)
 
 else:
