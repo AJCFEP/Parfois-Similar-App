@@ -9,13 +9,11 @@ import streamlit.components.v1 as components
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGO_PATH = BASE_DIR / "parfois.png"
 
-# Main file for display (SVG – vector, best quality)
+# SVG for display (high quality)
 FLUXO_SVG = BASE_DIR / "Fluxograma.drawio.mermaid.svg"
 
-# Optional export variants for download
+# PNG for download
 FLUXO_PNG = BASE_DIR / "Fluxograma.drawio.mermaid.png"
-FLUXO_JPG = BASE_DIR / "Fluxograma.drawio.mermaid.jpg"   # or .jpeg if you prefer
-FLUXO_PDF = BASE_DIR / "Fluxograma.drawio.mermaid.pdf"
 
 # -------------------------------------------------
 # Page config
@@ -95,68 +93,22 @@ st.write(
 )
 
 # -------------------------------------------------
-# Flowchart (SVG) with zoom/pan and multiple download buttons
+# Flowchart (SVG) with zoom/pan and PNG download
 # -------------------------------------------------
 if FLUXO_SVG.exists():
-    # -----------------------------
-    # Download buttons (SVG / PNG / JPG / PDF)
-    # -----------------------------
-    st.markdown("**Download flowchart:**")
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    # SVG download (always available, since FLUXO_SVG exists)
-    with col1:
-        svg_bytes = FLUXO_SVG.read_bytes()
+    # ---- PNG download button (if PNG exists) ----
+    if FLUXO_PNG.exists():
+        png_bytes = FLUXO_PNG.read_bytes()
         st.download_button(
-            label="SVG",
-            data=svg_bytes,
-            file_name="Parfois_Flowchart.svg",
-            mime="image/svg+xml",
+            label="Download flowchart (PNG)",
+            data=png_bytes,
+            file_name="Parfois_Flowchart.png",
+            mime="image/png",
         )
+    else:
+        st.caption("PNG file for download not found.")
 
-    # PNG download (if file exists)
-    with col2:
-        if FLUXO_PNG.exists():
-            png_bytes = FLUXO_PNG.read_bytes()
-            st.download_button(
-                label="PNG",
-                data=png_bytes,
-                file_name="Parfois_Flowchart.png",
-                mime="image/png",
-            )
-        else:
-            st.caption("PNG not found")
-
-    # JPG download (if file exists)
-    with col3:
-        if FLUXO_JPG.exists():
-            jpg_bytes = FLUXO_JPG.read_bytes()
-            st.download_button(
-                label="JPEG",
-                data=jpg_bytes,
-                file_name="Parfois_Flowchart.jpg",
-                mime="image/jpeg",
-            )
-        else:
-            st.caption("JPEG not found")
-
-    # PDF download (if file exists)
-    with col4:
-        if FLUXO_PDF.exists():
-            pdf_bytes = FLUXO_PDF.read_bytes()
-            st.download_button(
-                label="PDF",
-                data=pdf_bytes,
-                file_name="Parfois_Flowchart.pdf",
-                mime="application/pdf",
-            )
-        else:
-            st.caption("PDF not found")
-
-    # -----------------------------
-    # Zoomable / pannable viewer (using SVG)
-    # -----------------------------
+    # ---- SVG viewer with zoom/pan ----
     svg_bytes_for_view = FLUXO_SVG.read_bytes()
     svg_b64 = base64.b64encode(svg_bytes_for_view).decode("utf-8")
 
