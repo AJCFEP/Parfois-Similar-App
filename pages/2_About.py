@@ -312,7 +312,7 @@ st.write(
     """
     After the offline modelling and explainability work, the project is exposed
     to end users as a **multi-page Streamlit web application**, deployed from
-    GitHub to Streamlit Cloud, with optional **Supabase** integration for
+    GitHub to Streamlit Cloud, with **Supabase** integration for
     collecting user feedback about similarity quality.
     """
 )
@@ -333,9 +333,6 @@ st.write(
     - **`pages/2_About.py`** – this About page:
       - Reuses the PARFOIS header and layout.
       - Documents the full data pipeline, modelling and deployment.
-    - (Optionally) other pages for diagnostics, EDA or internal tools can be
-      added under the `pages/` folder; Streamlit automatically exposes each
-      `.py` file there as a sidebar page.
     """
 )
 
@@ -389,11 +386,11 @@ st.markdown("#### 9.4 Supabase and user feedback on similarity quality")
 st.write(
     """
     To evaluate and improve the similarity model from real user interactions,
-    the application can be extended with a **feedback form** connected to
+    the application includs a **feedback form** connected to
     a Supabase backend:
 
     1. **Feedback UI in Streamlit**  
-       - For a given reference product and its 4 neighbours, the app can show:
+       - For a given reference product and its 4 neighbours, the app show:
          - a dropdown or radio button to select the *best* neighbour,
          - sliders or rating widgets (e.g. 1–5) to score similarity quality,
          - a free-text field for optional comments.
@@ -407,10 +404,9 @@ st.write(
            - `neighbour_image_name`
            - `similarity_score`
            - `user_rating` (numeric)
-           - `user_comment` (text)
-         - and, if required, optional fields for user or session identifiers.
+           - `user_comment` (text).
        - Streamlit uses the Supabase Python client to `INSERT` rows into this
-         table when the feedback button is pressed.
+         table when the feedback button is pressed, maintaining all previous inputs from other users.
     3. **From raw feedback to model refinement**  
        - The `feedback` table can be downloaded and analysed offline
          (in a new notebook) together with `result_df.csv`.
