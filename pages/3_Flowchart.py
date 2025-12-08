@@ -71,6 +71,8 @@ st.write(
     """
 )
 
+
+'''
 if FLUXO_IMG.exists():
     st.image(str(FLUXO_IMG), use_container_width=True)
 else:
@@ -79,40 +81,68 @@ else:
         "não foi encontrada na pasta raiz da aplicação."
     )
 import base64
+'''
+
+import base64
 
 if FLUXO_IMG.exists():
-    # Read image and encode as base64
+    # Lê a imagem e codifica em base64
     img_bytes = FLUXO_IMG.read_bytes()
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
-    # HTML + JS with pan/zoom
     html = f"""
+    <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
+        <button id="zoom-in" style="margin-right:0.5rem;">+</button>
+        <button id="zoom-out" style="margin-right:0.5rem;">-</button>
+        <button id="zoom-reset">Reset</button>
+        <span style="margin-left:1rem; color:#666; font-size:0.9rem;">
+            Use o rato para arrastar a imagem. Roda do rato para zoom.
+        </span>
+    </div>
+
     <div id="img-container" style="
         width: 100%;
-        max-height: 80vh;
         border: 1px solid #ddd;
-        overflow: hidden;
-        margin-top: 1rem;
+        overflow: auto;   /* permite ver a imagem toda com scroll */
     ">
         <img id="zoom-img"
              src="data:image/png;base64,{img_b64}"
-             style="width: 100%; display: block;" />
+             style="display: block; max-width: 100%; height: auto;"/>
     </div>
 
-    <!-- Panzoom library -->
+    <!-- Biblioteca panzoom -->
     <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
     <script>
-        const elem = document.getElementById('zoom-img');
-        const parent = document.getElementById('img-container');
+        const img = document.getElementById('zoom-img');
+        const container = document.getElementById('img-container');
+        const btnIn = document.getElementById('zoom-in');
+        const btnOut = document.getElementById('zoom-out');
+        const btnReset = document.getElementById('zoom-reset');
 
-        if (elem && parent) {{
-            const panzoom = Panzoom(elem, {{
+        if (img && container && btnIn && btnOut && btnReset) {{
+            const panzoom = Panzoom(img, {{
                 maxScale: 5,
                 minScale: 1,
                 contain: 'outside'
             }});
 
-            parent.addEventListener('wheel', panzoom.zoomWithWheel);
+            // Zoom com roda do rato
+            container.addEventListener('wheel', panzoom.zoomWithWheel);
+
+            // Botão +
+            btnIn.addEventListener('click', function() {{
+                panzoom.zoomIn();
+            }});
+
+            // Botão -
+            btnOut.addEventListener('click', function() {{
+                panzoom.zoomOut();
+            }});
+
+            // Reset
+            btnReset.addEventListener('click', function() {{
+                panzoom.reset();
+            }});
         }}
     </script>
     """
