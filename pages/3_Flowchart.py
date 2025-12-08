@@ -71,8 +71,13 @@ st.write(
     """
 )
 
-###-----
-
+if FLUXO_IMG.exists():
+    st.image(str(FLUXO_IMG), use_container_width=True)
+else:
+    st.info(
+        "A imagem do fluxograma (`Fluxograma.drawio.mermaid.png`) "
+        "não foi encontrada na pasta raiz da aplicação."
+    )
 import base64
 
 if FLUXO_IMG.exists():
