@@ -7,7 +7,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGO_PATH = BASE_DIR / "parfois.png"
 
-# Explainability images (place these files in the repo root)
+# Explainability + process images (must be in repo root)
+FLUXO_IMG = BASE_DIR / "fluxogram.png"
 SEMANTIC_IMG = BASE_DIR / "Semantic Consistency (Top-1 Accuracy).png"
 REL_DOG_IMG = BASE_DIR / "relevance-dog.png"
 REL_FAN_IMG = BASE_DIR / "relevance-fan.png"
@@ -47,7 +48,7 @@ with col_title:
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # -------------------------------------------------
-# Content
+# Title + Global process figure
 # -------------------------------------------------
 st.markdown(
     """
@@ -59,19 +60,31 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Global process / architecture diagram (to be provided as fluxogram.png)
+if FLUXO_IMG.exists():
+    st.image(str(FLUXO_IMG), use_container_width=True,
+             caption="Global pipeline: from raw data to similarity app and feedback.")
+else:
+    st.info(
+        "Global process diagram `fluxogram.png` not found yet. "
+        "Place it in the app root folder (same level as Parfois_Similar.py)."
+    )
+
 # -------------------- 1. Overview --------------------
-st.markdown("### Overview")
+st.markdown("### 1. Overview")
 st.write(
     """
     This app displays image–based product similarity for PARFOIS items.
     The similarity matrix and the file `result_df.csv` were computed offline
-    in a Jupyter notebook and are only *visualised* here.  
-    Below is a high–level description of that pipeline.
+    in Jupyter notebooks and are only *visualised* here.  
+    Below is a high–level description of the data pipeline, the similarity
+    model, explainability analysis, and how everything is deployed as a
+    Streamlit application with an optional feedback loop.
     """
 )
 
 # -------------------- 2. Input data --------------------
-st.markdown("### 1. Input data")
+st.markdown("### 2. Input data")
 st.write(
     """
     The main notebook starts from two core datasets:
@@ -90,7 +103,7 @@ st.write(
 )
 
 # -------------------- 3. Image embeddings with CLIP --------------------
-st.markdown("### 2. Image embeddings with CLIP")
+st.markdown("### 3. Image embeddings with CLIP")
 st.write(
     """
     1. Each product image is loaded using its `image_name` (stem of the file name).
@@ -107,7 +120,7 @@ st.write(
 )
 
 # -------------------- 4. Merge with product catalogue --------------------
-st.markdown("### 3. Merge with product catalogue")
+st.markdown("### 4. Merge with product catalogue")
 st.write(
     """
     The embedding table is then merged with `df_product` so that each row contains:
@@ -123,13 +136,13 @@ st.write(
 
     After constructing `DES_CONC`, the original `L3_DES` and `L4_DES` columns
     are dropped, leaving a compact descriptor but preserving the category
-    information in `DES_CONC`.
+    information in `DES_CONC`.  
     Duplicate rows (same image/name) are removed at this stage.
     """
 )
 
 # -------------------- 5. Price estimation from sales --------------------
-st.markdown("### 4. Price estimation from sales")
+st.markdown("### 5. Price estimation from sales")
 st.write(
     """
     To attach a price to each image, the notebook proceeds as follows:
@@ -149,7 +162,7 @@ st.write(
 )
 
 # -------------------- 6. Similarity computation --------------------
-st.markdown("### 5. Similarity computation")
+st.markdown("### 6. Similarity computation")
 st.write(
     """
     Using the CLIP embeddings, the notebook computes image–image similarity in
@@ -184,7 +197,7 @@ st.write(
 )
 
 # -------------------- 7. Building result_df.csv --------------------
-st.markdown("### 6. Building `result_df.csv`")
+st.markdown("### 7. Building `result_df.csv`")
 st.write(
     """
     Finally, the notebook assembles everything into a single table:
@@ -202,32 +215,14 @@ st.write(
     """
 )
 
-# -------------------- 8. What the app does --------------------
-st.markdown("### 7. What the Streamlit app does")
-st.write(
-    """
-    The current app does **not** recompute embeddings or similarities.
-    Instead it:
-
-    1. Loads `result_df.csv`.
-    2. Lets the user select a product by `image_name`, `PROD_REF` or description.
-    3. Shows the original product image and metadata.
-    4. Displays the **top 4 most similar** products, using the neighbour
-       information pre-computed in the notebook.
-
-    This separation keeps the heavy model computation offline, while the web app
-    remains lightweight and fast for interactive exploration.
-    """
-)
-
-# -------------------- 9. Explainability and validation --------------------
+# -------------------- 8. Explainability and validation --------------------
 st.markdown("### 8. Explainability and validation")
 
 st.write(
     """
     Beyond computing similarities, an additional **Explainability notebook**
     was developed to understand and validate the behaviour of the CLIP-based
-    model and the similarity selection:
+    model and the similarity selection.
     """
 )
 
@@ -276,7 +271,7 @@ st.write(
 
     1. **Latent space visualisation (PCA)**  
        - The 512-dimensional CLIP embeddings are projected into 2D using PCA.  
-       - Points are coloured by product category (e.g. `L4_DES` on an earlier
+       - Points are coloured by product category (e.g. `L4_DES` in an earlier
          version of the dataset).  
        - The resulting scatter plot shows that items from the same category form
          coherent clusters, while related categories are located nearby.
@@ -298,6 +293,108 @@ if SEMANTIC_IMG.exists():
 else:
     st.info("Semantic consistency figure not found in the app folder.")
 
+# -------------------- 9. What the Streamlit app does --------------------
+st.markdown("### 9. What the Streamlit app does")
+st.write(
+    """
+    The Streamlit application is a **thin visualisation layer** on top of
+    `result_df.csv` and the original image files:
+
+    1. The main script `Parfois_Similar.py`:
+       - Loads `result_df.csv` into memory.
+       - Builds a scrollable selector that lists products by `image_name`,
+         `PROD_REF` and `DES_CONC`.
+       - Displays the selected product with metadata and price.
+       - Shows the **top 4 similar products**, with their images, prices and
+         similarity scores.
+    2. Additional pages in the `pages/` folder (such as this *About* page)
+       reuse the same logo and layout, and provide documentation and context.
+    3. All heavy computations (CLIP, similarity matrices, explainability plots)
+       are done offline in notebooks; the app focuses on being fast,
+       simple and interactive for end users.
+    """
+)
+
+# -------------------- 10. From notebook to Streamlit Cloud --------------------
+st.markdown("### 10. From notebooks to a public Streamlit app")
+st.write(
+    """
+    The complete path from experimentation to a public web app can be summarised
+    as follows:
+
+    1. **Model development in Jupyter**  
+       - CLIP embeddings, price estimation, similarity matrices and explainability
+         analyses are developed and validated in Jupyter notebooks
+         (e.g. *Parfois Similarity.ipynb* and *Sprint3_Explainability.ipynb*).
+       - Once the pipeline is stable, the notebook exports the final table
+         `result_df.csv` and the figures used for explainability.
+    2. **Creation of the Streamlit app (local Python code)**  
+       - A Python script `Parfois_Similar.py` is created to load `result_df.csv`,
+         resolve image paths and build the interactive interface with Streamlit
+         widgets (selectors, layout, additional pages).
+       - The app is tested locally with `streamlit run Parfois_Similar.py`.
+    3. **Version control with Git and GitHub**  
+       - All project files (scripts, data, images, notebooks) are placed in a
+         local git repository (`Parfois_Similar_App`).
+       - Using GitHub Desktop or git on the command line, commits are created
+         and pushed to the public repository
+         `AJCFEP/Parfois-Similar-App` on GitHub.
+    4. **Deployment on Streamlit Cloud**  
+       - On https://share.streamlit.io, a new app is created pointing to:
+         - Repository: `AJCFEP/Parfois-Similar-App`
+         - Branch: `main`
+         - Main file: `Parfois_Similar.py`.
+       - Streamlit Cloud installs the dependencies from `requirements.txt`,
+         runs the script and hosts the app at a public URL.
+    5. **Continuous updates**  
+       - Any change pushed to the GitHub repository (code, `result_df.csv`,
+         images, About/Explainability text) triggers an automatic redeploy,
+         keeping the public app synchronised with the latest version of the
+         academic project.
+    """
+)
+
+# -------------------- 11. User feedback on similarity quality --------------------
+st.markdown("### 11. User feedback on similarity quality")
+st.write(
+    """
+    The similarity model can be further improved by incorporating **user
+    feedback** about the quality of the recommended neighbours.  
+    The envisioned feedback loop works as follows:
+
+    1. **Interactive selection in the app**  
+       - The user chooses a reference product in the main page and sees the
+         four suggested similar products.
+    2. **Rating and comments**  
+       - For each recommended neighbour (or for the set of 4 as a whole), the
+         interface can expose:
+           - a numerical rating (e.g. from 1 to 5) answering  
+             *“How similar is this item to the original?”*;
+           - a free-text comment box where the user can justify the rating or
+             point out specific issues (e.g. *“color mismatch”*, *“different
+             product type”*).
+    3. **Data storage**  
+       - Each submitted feedback row typically contains:
+         - IDs of the original image and the recommended neighbour(s)
+         - the similarity scores produced by the model
+         - the user rating
+         - an optional textual comment
+         - a timestamp.
+       - Technically, this can be stored in a simple CSV file
+         (e.g. `similarity_feedback.csv` in the `data/` folder) or in a
+         database service.
+    4. **Offline analysis and model refinement**  
+       - Offline, this feedback table is analysed to identify systematic
+         patterns (e.g. categories where the model overestimates similarity).
+       - Thresholds (such as the 0.90 cosine similarity cut-off) can be
+         adjusted, and additional signals (e.g. stronger weight on `DES_CONC`
+         or price consistency) can be incorporated.
+       - In future iterations, the CLIP embeddings or similarity scoring
+         strategy may be fine-tuned using this collected feedback, closing a
+         **human-in-the-loop** improvement cycle.
+    """
+)
+
 # -------------------- Team Members --------------------
 st.markdown("### Team Members")
 st.write(
@@ -312,3 +409,4 @@ st.write(
     - **Telmo Barbosa** – *up201200195@edu.fep.up.pt*  
     """
 )
+
