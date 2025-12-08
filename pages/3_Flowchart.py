@@ -71,10 +71,51 @@ st.write(
     """
 )
 
+###-----
+
+import base64
+
 if FLUXO_IMG.exists():
-    st.image(str(FLUXO_IMG), use_container_width=True)
+    # Read image and encode as base64
+    img_bytes = FLUXO_IMG.read_bytes()
+    img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+
+    # HTML + JS with pan/zoom
+    html = f"""
+    <div id="img-container" style="
+        width: 100%;
+        max-height: 80vh;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        margin-top: 1rem;
+    ">
+        <img id="zoom-img"
+             src="data:image/png;base64,{img_b64}"
+             style="width: 100%; display: block;" />
+    </div>
+
+    <!-- Panzoom library -->
+    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
+    <script>
+        const elem = document.getElementById('zoom-img');
+        const parent = document.getElementById('img-container');
+
+        if (elem && parent) {{
+            const panzoom = Panzoom(elem, {{
+                maxScale: 5,
+                minScale: 1,
+                contain: 'outside'
+            }});
+
+            parent.addEventListener('wheel', panzoom.zoomWithWheel);
+        }}
+    </script>
+    """
+
+    st.markdown(html, unsafe_allow_html=True)
+
 else:
     st.info(
-        "A imagem do fluxograma (`Fluxograma.drawio.mermaid.png`) "
-        "não foi encontrada na pasta raiz da aplicação."
+        "The flowchart image (`Fluxograma.drawio.mermaid.png`) "
+        "was not found in the app root folder."
     )
