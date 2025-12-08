@@ -428,7 +428,9 @@ st.write(
 st.markdown("### Team Members")
 st.write(
     """
-    This project was developed by a group of MADSAD students from FEP – UP at "Quantitative Case Studies" course:    - **André Costa** – *up199401247@edu.fep.up.pt*  
+    This project was developed by a group of MADSAD students from FEP – UP at "Quantitative Case Studies" course:
+
+    - **André Costa** – *up199401247@edu.fep.up.pt*  
     - **Catarina Monteiro** – *up202107961@edu.fep.up.pt*  
     - **João Monteiro** – *up202006793@edu.fep.up.pt*  
     - **Luis Ferreira** – *up202107032@edu.fep.up.pt*  
