@@ -87,7 +87,6 @@ else:
 import base64
 '''
 
-import base64
 
 if FLUXO_IMG.exists():
     # Lê a imagem e codifica em base64
@@ -95,6 +94,7 @@ if FLUXO_IMG.exists():
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
     html = f"""
+    <!DOCTYPE html>
     <html>
       <head>
         <meta charset="UTF-8" />
@@ -102,7 +102,53 @@ if FLUXO_IMG.exists():
       </head>
       <body>
         <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
-            <button id="zoom-in" style="margin
+          <button id="zoom-in" style="margin-right:0.5rem;">+</button>
+          <button id="zoom-out" style="margin-right:0.5rem;">-</button>
+          <button id="zoom-reset">Reset</button>
+          <span style="margin-left:1rem; color:#666; font-size:0.9rem;">
+            Use o rato para arrastar a imagem e a roda do rato para fazer zoom.
+          </span>
+        </div>
+
+        <div id="img-container" style="
+            width: 100%;
+            height: 80vh;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        ">
+          <img id="zoom-img"
+               src="data:image/png;base64,{img_b64}"
+               style="display:block; max-width:100%; max-height:100%; margin:auto;" />
+        </div>
+
+        <script>
+          const img = document.getElementById('zoom-img');
+          const container = document.getElementById('img-container');
+          const btnIn = document.getElementById('zoom-in');
+          const btnOut = document.getElementById('zoom-out');
+          const btnReset = document.getElementById('zoom-reset');
+
+          if (img && container && btnIn && btnOut && btnReset) {{
+            const panzoom = Panzoom(img, {{
+              maxScale: 5,
+              minScale: 1,
+              contain: 'outside'
+            }});
+
+            // Zoom com roda do rato
+            container.addEventListener('wheel', panzoom.zoomWithWheel);
+
+            // Botões
+            btnIn.addEventListener('click', () => panzoom.zoomIn());
+            btnOut.addEventListener('click', () => panzoom.zoomOut());
+            btnReset.addEventListener('click', () => panzoom.reset());
+          }}
+        </script>
+      </body>
+    </html>
+    """
+
+    components.html(html, height=700, scrolling=False)
 
 else:
     st.info(
