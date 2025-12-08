@@ -3,8 +3,6 @@ from pathlib import Path
 import base64
 import streamlit.components.v1 as components
 
-
-
 # -------------------------------------------------
 # Paths
 # -------------------------------------------------
@@ -15,7 +13,7 @@ FLUXO_IMG = BASE_DIR / "Fluxograma.drawio.mermaid.png"
 # -------------------------------------------------
 # Page config
 # -------------------------------------------------
-st.set_page_config(page_title="PARFOIS – Fluxograma do Processo", layout="wide")
+st.set_page_config(page_title="PARFOIS – Flowchart", layout="wide")
 
 # -------------------------------------------------
 # Header (igual às outras páginas)
@@ -47,13 +45,13 @@ with col_title:
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # -------------------------------------------------
-# Conteúdo: título, descrição e imagem do fluxograma
+# Texto introdutório
 # -------------------------------------------------
 st.markdown(
     """
     <div style="font-size:32px; font-weight:600;
                 margin-top:4px; margin-bottom:8px;">
-        Fluxograma global do projeto
+        Global flowchart of the project
     </div>
     """,
     unsafe_allow_html=True,
@@ -61,35 +59,24 @@ st.markdown(
 
 st.write(
     """
-    Este fluxograma resume todas as etapas do projeto, desde os dados brutos e 
-    a modelização em Jupyter, até à aplicação web em Streamlit e ao ciclo de 
-    feedback com Supabase para melhoria contínua do modelo de similaridade.
+    This flowchart summarizes the complete pipeline of the project, from raw data 
+    and Jupyter modeling to the Streamlit web application and the user feedback 
+    loop stored in Supabase.
     """
 )
 
 st.write(
     """
-    A figura mostra como os diferentes blocos se ligam: preparação dos dados,
-    cálculo dos embeddings CLIP, construção do `result_df.csv`, explicabilidade,
-    deployment via GitHub e Streamlit Cloud, e recolha de feedback dos utilizadores.
+    It shows how data preparation, CLIP embeddings, the construction of 
+    `result_df.csv`, explainability analyses, deployment via GitHub and 
+    Streamlit Cloud, and feedback collection are all connected in a single workflow.
     """
 )
 
-
-'''
+# -------------------------------------------------
+# Imagem com zoom e pan (sem bibliotecas externas)
+# -------------------------------------------------
 if FLUXO_IMG.exists():
-    st.image(str(FLUXO_IMG), use_container_width=True)
-else:
-    st.info(
-        "A imagem do fluxograma (`Fluxograma.drawio.mermaid.png`) "
-        "não foi encontrada na pasta raiz da aplicação."
-    )
-import base64
-'''
-
-
-if FLUXO_IMG.exists():
-    # Lê a imagem e codifica em base64
     img_bytes = FLUXO_IMG.read_bytes()
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")
 
@@ -98,27 +85,51 @@ if FLUXO_IMG.exists():
     <html>
       <head>
         <meta charset="UTF-8" />
-        <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@9.4.0/dist/panzoom.min.js"></script>
-      </head>
-      <body>
-        <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
-          <button id="zoom-in" style="margin-right:0.5rem;">+</button>
-          <button id="zoom-out" style="margin-right:0.5rem;">-</button>
-          <button id="zoom-reset">Reset</button>
-          <span style="margin-left:1rem; color:#666; font-size:0.9rem;">
-            Use o rato para arrastar a imagem e a roda do rato para fazer zoom.
-          </span>
-        </div>
-
-        <div id="img-container" style="
+        <style>
+          body {{
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+          }}
+          #toolbar {{
+            margin-top: 16px;
+            margin-bottom: 8px;
+          }}
+          #toolbar button {{
+            margin-right: 8px;
+          }}
+          #img-container {{
             width: 100%;
             height: 80vh;
             border: 1px solid #ddd;
             overflow: hidden;
-        ">
+            position: relative;
+            background-color: #f9f9f9;
+          }}
+          #zoom-img {{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center center;
+            cursor: grab;
+          }}
+        </style>
+      </head>
+      <body>
+        <div id="toolbar">
+          <button id="zoom-in">+</button>
+          <button id="zoom-out">-</button>
+          <button id="zoom-reset">Reset</button>
+          <span style="margin-left:1rem; color:#666; font-size:0.9rem;">
+            Drag to pan. Use mouse wheel or buttons to zoom.
+          </span>
+        </div>
+
+        <div id="img-container">
           <img id="zoom-img"
                src="data:image/png;base64,{img_b64}"
-               style="display:block; max-width:100%; max-height:100%; margin:auto;" />
+               alt="Project flowchart" />
         </div>
 
         <script>
@@ -128,27 +139,72 @@ if FLUXO_IMG.exists():
           const btnOut = document.getElementById('zoom-out');
           const btnReset = document.getElementById('zoom-reset');
 
-          if (img && container && btnIn && btnOut && btnReset) {{
-            const panzoom = Panzoom(img, {{
-              maxScale: 5,
-              minScale: 1,
-              contain: 'outside'
-            }});
+          let scale = 1.0;
+          let minScale = 0.5;
+          let maxScale = 5.0;
+          let isPanning = false;
+          let startX = 0;
+          let startY = 0;
+          let translateX = 0;
+          let translateY = 0;
 
-            // Zoom com roda do rato
-            container.addEventListener('wheel', panzoom.zoomWithWheel);
-
-            // Botões
-            btnIn.addEventListener('click', () => panzoom.zoomIn());
-            btnOut.addEventListener('click', () => panzoom.zoomOut());
-            btnReset.addEventListener('click', () => panzoom.reset());
+          function updateTransform() {{
+            img.style.transform =
+              "translate(" + translateX + "px, " + translateY + "px) scale(" + scale + ")";
           }}
+
+          // Botões de zoom
+          btnIn.addEventListener('click', function() {{
+            scale = Math.min(maxScale, scale + 0.2);
+            updateTransform();
+          }});
+
+          btnOut.addEventListener('click', function() {{
+            scale = Math.max(minScale, scale - 0.2);
+            updateTransform();
+          }});
+
+          btnReset.addEventListener('click', function() {{
+            scale = 1.0;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+          }});
+
+          // Zoom com roda do rato
+          container.addEventListener('wheel', function(e) {{
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.1 : -0.1;
+            scale = Math.min(maxScale, Math.max(minScale, scale + delta));
+            updateTransform();
+          }});
+
+          // Pan (arrastar) com rato
+          img.addEventListener('mousedown', function(e) {{
+            isPanning = true;
+            img.style.cursor = 'grabbing';
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+          }});
+
+          window.addEventListener('mousemove', function(e) {{
+            if (!isPanning) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateTransform();
+          }});
+
+          window.addEventListener('mouseup', function(e) {{
+            isPanning = false;
+            img.style.cursor = 'grab';
+          }});
         </script>
       </body>
     </html>
     """
 
-    components.html(html, height=700, scrolling=False)
+    # Renderizamos o HTML com JS dentro de um componente Streamlit
+    components.html(html, height=750, scrolling=False)
 
 else:
     st.info(
