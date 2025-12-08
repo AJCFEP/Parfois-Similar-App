@@ -44,6 +44,25 @@ with col_title:
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
+# Make this page use full screen width
+st.markdown(
+    """
+    <style>
+    .main .block-container {
+        max-width: 100%;
+        padding-left: 0rem;
+        padding-right: 0rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+
+
+
 # -------------------------------------------------
 # Texto introdutório
 # -------------------------------------------------
