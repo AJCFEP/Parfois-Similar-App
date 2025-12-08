@@ -8,7 +8,14 @@ import streamlit.components.v1 as components
 # -------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGO_PATH = BASE_DIR / "parfois.png"
-FLUXO_IMG = BASE_DIR / "Fluxograma.drawio.mermaid.png"
+
+# Main file for display (SVG – vector, best quality)
+FLUXO_SVG = BASE_DIR / "Fluxograma.drawio.mermaid.svg"
+
+# Optional export variants for download
+FLUXO_PNG = BASE_DIR / "Fluxograma.drawio.mermaid.png"
+FLUXO_JPG = BASE_DIR / "Fluxograma.drawio.mermaid.jpg"   # or .jpeg if you prefer
+FLUXO_PDF = BASE_DIR / "Fluxograma.drawio.mermaid.pdf"
 
 # -------------------------------------------------
 # Page config
@@ -88,22 +95,70 @@ st.write(
 )
 
 # -------------------------------------------------
-# Flowchart image with zoom/pan and download button
+# Flowchart (SVG) with zoom/pan and multiple download buttons
 # -------------------------------------------------
-if FLUXO_IMG.exists():
-    # Read image bytes once
-    img_bytes = FLUXO_IMG.read_bytes()
+if FLUXO_SVG.exists():
+    # -----------------------------
+    # Download buttons (SVG / PNG / JPG / PDF)
+    # -----------------------------
+    st.markdown("**Download flowchart:**")
 
-    # Download button (PNG)
-    st.download_button(
-        label="Download flowchart (PNG)",
-        data=img_bytes,
-        file_name="Parfois_Flowchart.png",
-        mime="image/png",
-    )
+    col1, col2, col3, col4 = st.columns(4)
 
-    # Encode as base64 for embedding in HTML
-    img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+    # SVG download (always available, since FLUXO_SVG exists)
+    with col1:
+        svg_bytes = FLUXO_SVG.read_bytes()
+        st.download_button(
+            label="SVG",
+            data=svg_bytes,
+            file_name="Parfois_Flowchart.svg",
+            mime="image/svg+xml",
+        )
+
+    # PNG download (if file exists)
+    with col2:
+        if FLUXO_PNG.exists():
+            png_bytes = FLUXO_PNG.read_bytes()
+            st.download_button(
+                label="PNG",
+                data=png_bytes,
+                file_name="Parfois_Flowchart.png",
+                mime="image/png",
+            )
+        else:
+            st.caption("PNG not found")
+
+    # JPG download (if file exists)
+    with col3:
+        if FLUXO_JPG.exists():
+            jpg_bytes = FLUXO_JPG.read_bytes()
+            st.download_button(
+                label="JPEG",
+                data=jpg_bytes,
+                file_name="Parfois_Flowchart.jpg",
+                mime="image/jpeg",
+            )
+        else:
+            st.caption("JPEG not found")
+
+    # PDF download (if file exists)
+    with col4:
+        if FLUXO_PDF.exists():
+            pdf_bytes = FLUXO_PDF.read_bytes()
+            st.download_button(
+                label="PDF",
+                data=pdf_bytes,
+                file_name="Parfois_Flowchart.pdf",
+                mime="application/pdf",
+            )
+        else:
+            st.caption("PDF not found")
+
+    # -----------------------------
+    # Zoomable / pannable viewer (using SVG)
+    # -----------------------------
+    svg_bytes_for_view = FLUXO_SVG.read_bytes()
+    svg_b64 = base64.b64encode(svg_bytes_for_view).decode("utf-8")
 
     html = f"""
     <!DOCTYPE html>
@@ -152,7 +207,7 @@ if FLUXO_IMG.exists():
 
         <div id="img-container">
           <img id="zoom-img"
-               src="data:image/png;base64,{img_b64}"
+               src="data:image/svg+xml;base64,{svg_b64}"
                alt="Project flowchart" />
         </div>
 
@@ -208,19 +263,21 @@ if FLUXO_IMG.exists():
           }});
 
           btnReset.addEventListener('click', function() {{
-            scale = 1.0;
-            translateX = 0;
-            translateY = 0;
-            // After reset, fit again to container
+            // Reset and refit
             const cw = container.clientWidth;
             const ch = container.clientHeight;
             const iw = img.naturalWidth;
             const ih = img.naturalHeight;
+
             if (iw > 0 && ih > 0) {{
               const s = Math.min(cw / iw, ch / ih);
               scale = s;
               translateX = (cw - iw * scale) / 2;
               translateY = (ch - ih * scale) / 2;
+            }} else {{
+              scale = 1.0;
+              translateX = 0;
+              translateY = 0;
             }}
             updateTransform();
           }});
@@ -261,6 +318,6 @@ if FLUXO_IMG.exists():
 
 else:
     st.info(
-        "The flowchart image (`Fluxograma.drawio.mermaid.png`) "
+        "The flowchart SVG file (`Fluxograma.drawio.mermaid.svg`) "
         "was not found in the app root folder."
     )
