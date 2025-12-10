@@ -126,7 +126,8 @@ st.write(
       - **`Sizes`** – concatenation of distinct `SZ_DES` per `PROD_REF`
       - **`Color`** – concatenation of distinct `CLR_DES` per `PROD_REF`.
 
-    
+
+    Duplicate rows (same image/name) are removed at this stage.
     """
 )
 
