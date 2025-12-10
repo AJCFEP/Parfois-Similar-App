@@ -120,13 +120,13 @@ st.write(
     - `image_name`
     - `PROD_REF`
     - category descriptors, combined as  
-      **`DES_CONC = L3_DES + '_' + L4_DES`**
+      **`DES_CONC = L3_DES `**
     - and later, aggregated attributes:
 
       - **`Sizes`** – concatenation of distinct `SZ_DES` per `PROD_REF`
       - **`Color`** – concatenation of distinct `CLR_DES` per `PROD_REF`.
 
-    After constructing `DES_CONC`, the original `L3_DES` and `L4_DES` columns
+    After constructing `DES_CONC`, the original `L3_DES` columns
     are dropped, leaving a compact descriptor but preserving the category
     information in `DES_CONC`.  
     Duplicate rows (same image/name) are removed at this stage.
