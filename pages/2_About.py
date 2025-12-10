@@ -119,8 +119,7 @@ st.write(
 
     - `image_name`
     - `PROD_REF`
-    - category descriptors combined as  
-      **`L4_DES`**
+    - `L4_DES`
     - and later, aggregated attributes:
 
       - **`Sizes`** – concatenation of distinct `SZ_DES` per `PROD_REF`
