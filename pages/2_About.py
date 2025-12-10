@@ -119,16 +119,14 @@ st.write(
 
     - `image_name`
     - `PROD_REF`
-    - category descriptors  
-      **`L3_DES`**
+    - category descriptors combined as  
+      **`L4_DES`**
     - and later, aggregated attributes:
 
       - **`Sizes`** – concatenation of distinct `SZ_DES` per `PROD_REF`
       - **`Color`** – concatenation of distinct `CLR_DES` per `PROD_REF`.
 
-    After constructing, `L3_DES` columns
-    are dropped.  
-    Duplicate rows (same image/name) are removed at this stage.
+    
     """
 )
 
