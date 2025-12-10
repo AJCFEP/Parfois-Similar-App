@@ -119,7 +119,7 @@ st.write(
 
     - `image_name`
     - `PROD_REF`
-    - category descriptors, combined as  
+    - category descriptors  
       **`DES_CONC = L3_DES `**
     - and later, aggregated attributes:
 
